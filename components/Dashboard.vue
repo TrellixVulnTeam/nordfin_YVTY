@@ -1,5 +1,139 @@
 <template>
     <div class="wallet">
+    <div class="wallet__slide" v-if="slide === 'cards'" @click.stop="closeslide">
+       <div></div>
+       <div class="wallet__slide--body" @click.stop="openslide('cards')">
+            <h2 class="wallet__slide--h2">Your Cards</h2>
+            <div>You don't have any cards currently</div>
+            <div>
+                <button>Apply for a card</button>
+            </div>
+       </div>
+    </div>
+
+    <div class="wallet__slide" v-if="slide === 'notifications'" @click.stop="closeslide">
+        <div></div>
+       <div class="wallet__slide--body" @click.stop="openslide('notifications')">
+            <h2 class="wallet__slide--h2">Your Notifications</h2>
+            <div class="wallet__notifications">
+               <!-- <div class="wallet__notification">
+                    <p>You just deposited $25000 in your wallet</p>
+                    <p>July 23rd 2022</p>
+                </div>
+                <div class="wallet__notification">
+                    <p>Your cards have been created</p>
+                    <p>July 23rd 2022</p>
+                </div>
+                <div class="wallet__notification">
+                    <p>Your withdrawal request has been reviewed</p>
+                    <p>July 23rd 2022</p>
+                </div>-->
+            </div>
+       </div>
+    </div>
+
+    <div class="wallet__slide" v-if="slide === 'messages'" @click.stop="closeslide">
+        <div></div>
+       <div class="wallet__slide--body" @click.stop="openslide('messages')">
+            <h2 class="wallet__slide--h2">Your Messages</h2>
+            <div class="wallet__notifications">
+                <!--<div class="wallet__notification">
+                    <p>You just </p>
+                    <p>July 23rd 2022</p>
+                </div>
+                <div class="wallet__notification">
+                    <p>Your cards</p>
+                    <p>July 23rd 2022</p>
+                </div>-->
+            </div>
+       </div>
+    </div>
+
+    <div class="wallet__slide" v-if="slide === 'transactions'" @click.stop="closeslide">
+        <div></div>
+       <div class="wallet__slide--body wallet__slide--transaction" @click.stop="openslide('transactions')">
+            <h2 class="wallet__slide--h2">Your Transactions</h2>
+            <div class="wallet__right">
+                <div class="wallet__middle">
+        <div class="wallet__middletop">
+        <div class="wallet__middletop--left">
+        <div class="wallet__middletop--item" :class="{
+            current: transPage === 'all'
+        }" @click="toggleTransPage('all')">
+            <p>All transactions</p>
+        </div>
+        <div class="wallet__middletop--item" :class="{
+            current: transPage === 'deposit'
+        }" @click="toggleTransPage('deposit')">
+            <p>Deposits</p>
+        </div>
+        <div class="wallet__middletop--item" :class="{
+            current: transPage === 'withdrawal'
+        }" @click="toggleTransPage('withdrawal')">
+            <p>Withdrawals</p>
+        </div>
+        <div class="wallet__middletop--item" :class="{
+            current: transPage === 'transfer'
+        }" @click="toggleTransPage('transfer')">
+            <p>Transfers</p>
+        </div>
+        </div>
+
+        <div class="wallet__middletop--right">
+            <button class="wallet__middletop--btn"></button>
+        </div>
+    </div>
+
+    <div class="wallet__middlecontent" v-if="user">
+        <div v-if="!user.transactions.length" class="wallet__middlecontent--notransactions">
+            <p>Currently you have made no transactions</p>
+        </div>
+        <div class="wallet__middleconitem" v-for="transaction in user.transactions" :class="{
+            visible: transPage === transaction.transactionType || transPage === 'all'
+        }">
+            <div class="wallet__middleconitem--amount wallet__middleconitem--area" v-if="transaction.transactionType === 'deposit'">
+                <span class="wallet__middleconitem--label deposit">
+                   <p>D</p>
+                </span>
+                <span class="wallet__middleconitem--total deposit">
+                    <p>+$ {{truncate(parseFloat(transaction.amount).toLocaleString('en-US'))}}</p>
+                </span>
+            </div>
+            <div class="wallet__middleconitem--amount wallet__middleconitem--area" v-if="transaction.transactionType === 'withdrawal'">
+                <span class="wallet__middleconitem--label withdrawal">
+                   <p>W</p>
+                </span>
+                <span class="wallet__middleconitem--total withdrawal">
+                    <p>-$ {{truncate(parseFloat(transaction.amount).toLocaleString('en-US'))}}</p>
+                </span>
+            </div>
+            <div class="wallet__middleconitem--amount wallet__middleconitem--area" v-if="transaction.transactionType === 'transfer'">
+                <span class="wallet__middleconitem--label transfer">
+                   <p>T</p>
+                </span>
+                <span class="wallet__middleconitem--total transfer">
+                    <p>-$ {{truncate(parseFloat(transaction.amount).toLocaleString('en-US'))}}</p>
+                </span>
+            </div>
+            <div class="wallet__middleconitem--area capitalize">
+                <p>{{transaction.dateTime}}</p>
+            </div>
+            <div class="wallet__middleconitem--area capitalize">
+                <p>{{transaction.transactionType}}</p>
+            </div>
+            <div class="wallet__middleconitem--area">
+                Trans ID: {{transaction.transactionId}}
+            </div>
+            <div class="wallet__middleconitem--area fee">
+                <p>${{truncate(parseFloat(transaction.fee).toLocaleString('en-US'))}}</p>
+            </div>
+        </div>
+    </div>
+    </div>
+            </div>
+       </div>
+    </div>
+
             <header class="wallet__header">
                 <div class="wallet__headerleft">
                     <figure>
@@ -12,17 +146,31 @@
                             <span>Transactions</span>
                         </div>
                     </div>
-                    <div class="wallet__headersec" @click="openslide('cards')">
-                        <div class="wallet__headersec--dropdown">
-                            <span>Cards</span>
-                        </div>
-                    </div>
                     <div class="wallet__headersec" @click="openslide('notifications')">
                         <div class="wallet__headersec--dropdown">
-                            <span class="notification">10</span>
+                            <!--<span class="notification">10</span>-->
                             <span class="svg">
                                 <svg>
                                     <use xlink:href="@/assets/imgs/sprite.svg#icon-bell" />
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="wallet__headersec" @click="openslide('messages')">
+                        <div class="wallet__headersec--dropdown">
+                            <!--<span class="notification">10</span>-->
+                            <span class="svg">
+                                <svg>
+                                    <use xlink:href="@/assets/imgs/sprite.svg#icon-message-square" />
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="wallet__headersec" @click="$router.push('/wallet')">
+                        <div class="wallet__headersec--dropdown">
+                            <span class="svg">
+                                <svg>
+                                    <use xlink:href="@/assets/imgs/sprite.svg#icon-wallet1" />
                                 </svg>
                             </span>
                         </div>
@@ -33,6 +181,18 @@
             <div class="wallet__body">
                 <div class="wallet__sidenav">
                     <div class="wallet__sidenav--item" :class="{
+                        'current': currentroute === 'wallet'
+                    }">
+                        <router-link to="/wallet">
+                            <span>
+                                <svg>
+                                    <use xlink:href="@/assets/imgs/sprite.svg#icon-wallet1" />
+                                </svg>
+                            </span>
+                            <span>Wallet</span>
+                        </router-link>
+                    </div>
+                    <div class="wallet__sidenav--item" :class="{
                         'current': currentroute === 'overview'
                     }">
                         <router-link to="/overview">
@@ -41,7 +201,7 @@
                                     <use xlink:href="@/assets/imgs/sprite.svg#icon-bar-chart" />
                                 </svg>
                             </span>
-                            <span>Overview</span>
+                            <span>Stats</span>
                         </router-link>
                     </div>
                     <div class="wallet__sidenav--item" :class="{
@@ -105,14 +265,27 @@
 </template>
 
 <script>
+import userMixin from '@/mixins/user.js'
     export default {
         data() {
             return {
-                current: 'overview'
+                current: 'overview',
+                transPage: 'all',
+                slide: null,
             }
         },
-        props: ['title', 'openslide'],
+        props: ['title'],
+        mixins: [userMixin],
         methods: {
+            truncate(input) {
+                if (input.length > 10) {
+                return input.substring(0, 10) + '...';
+                }
+                return input;
+            },
+            toggleTransPage(page) {
+                this.transPage = page;
+            },
             btnselect(val) {
                 this.current = val;
             },
@@ -120,6 +293,12 @@
                 localStorage.removeItem('norduserxtxtxt');
                 localStorage.removeItem('nordtokenxtxtxt');
                 this.$router.push('/');
+            },
+            closeslide() {
+                this.slide = null
+            },
+            openslide(val) {
+                this.slide = val
             }
         },
         computed: {
@@ -139,6 +318,247 @@
 
     .wallet {
         color: #fff;
+
+        &__slide {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(0, 0, 0, .2);
+            height: 100vh;
+            width: 100vw;
+            z-index: 16;
+            box-shadow: -11px 3px 85px 13px rgba(0,0,0,0.62);
+            -webkit-box-shadow: -11px 3px 85px 13px rgba(0,0,0,0.62);
+            -moz-box-shadow: -11px 3px 85px 13px rgba(0,0,0,0.62);
+            color: #000000;
+            display: flex;
+            justify-content: space-between;
+
+            &--h2 {
+                font-weight: 500;
+                font-size: #{scaleValue(20)};
+                padding: #{scaleValue(24)};
+            }
+
+            &--body {
+                background: #fff;
+                height: 100%;
+                width: #{scaleValue(400)};
+            }
+
+            &--transaction {
+                width: #{scaleValue(850)};
+            }
+        }
+
+        &__notifications {
+            background: #fff;
+            webkit-box-shadow: 0px 0px 27px 0px rgba(#474DFF, .3);
+            -moz-box-shadow:    0px 0px 27px 0px rgba(#474DFF, .3);
+            box-shadow:         0px 0px 27px 0px rgba(#474DFF, .3); 
+            margin-left: #{scaleValue(25)};
+            border-radius: .4rem;     
+        }
+
+        &__notification {
+            border-bottom: solid 1px rgba(0, 0, 0, .4);
+            padding: #{scaleValue(25)};
+
+            & p {
+
+                &:nth-child(1) {
+                    font-size: #{scaleValue(17)};
+                    font-weight: 500;
+                    margin-bottom: #{scaleValue(10)};
+                }
+
+                &:nth-child(2) {
+                    font-size: #{scaleValue(13)};
+                    color: rgba(0, 0, 0, .3);
+                    font-weight: 500;
+                }
+            }
+        }
+
+        &__middletop {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: .4px solid rgba(0, 0, 0, .4);
+            
+            &--left {
+                display: flex;
+            }
+
+            &--right {
+                display: flex;
+                align-items: center;
+            }
+
+            &--btn {
+                outline: none;
+                background: none;
+                color: rgba(#474DFF, .9);
+                cursor: pointer;
+                border: none;
+                font-weight: 500;
+                font-size: #{scaleValue(13)};
+            }
+
+            &--item {
+                margin-right: #{scaleValue(25)};
+                font-size: #{scaleValue(15)};
+                padding: #{scaleValue(12)} 0;
+                cursor: pointer;
+                color: rgba(0, 0, 0, .4);
+                position: relative;
+                transition: all .1s ease-in;
+
+                & p {
+                    font-weight: 500;
+                }
+
+                &:before {
+                    content: '';
+                    position: absolute;
+                    bottom: #{scaleValue(15)};
+                    left: 0;
+                    background: rgba(0, 0, 0, 0);
+                    height: 2px;
+                    width: 100%;
+                    border-radius: 3rem;
+                    transition: all .1s ease-in;
+                }
+
+                &.current {
+                    color: rgba(0, 0, 0, 1);
+
+                    &:before {
+                        background: rgba(0, 0, 0, 1);
+                        bottom: 0;
+                    }
+                }
+            }
+        }
+
+        &__middle {
+            position: relative;
+            background: #fff;
+            webkit-box-shadow: 0px 0px 27px 0px rgba(#474DFF, .3);
+            -moz-box-shadow:    0px 0px 27px 0px rgba(#474DFF, .3);
+            box-shadow:         0px 0px 27px 0px rgba(#474DFF, .3);
+            flex-basis: #{scaleValue(800)};
+            padding: #{scaleValue(25)} #{scaleValue(30)};
+            border-radius: .9rem;
+            color: #000000;
+            
+            transition: all .3s ease-in;
+        }
+
+        &__middlecontent {
+
+            &--notransactions {
+                font-size: #{scaleValue(20)};
+                text-align: center;
+                padding: #{scaleValue(30)};
+                font-weight: 500;
+            }
+        }
+
+        &__middleconitem {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: #{scaleValue(20)} 0;
+            font-size: #{scaleValue(14)};
+            color: rgba(0, 0, 0, .6);
+            border-bottom: .4px solid rgba(0, 0, 0, .4);
+            display: none;
+
+            &.visible {
+                display: flex;
+            }
+
+            &:last-child {
+                border: none;
+            }
+
+            &--area {
+                text-align: left;
+                flex-shrink: 0;
+
+                &.capitalize {
+                
+                    & p {
+                        text-transform: capitalize;
+                    }
+                }
+
+                &:nth-child(1) {
+                    flex-basis: #{scaleValue(150)};
+                }
+
+                &:nth-child(2) {
+                    flex-basis: #{scaleValue(150)};
+                }
+
+                &:nth-child(3) {
+                    flex-basis: #{scaleValue(80)};
+                }
+
+                &:nth-child(4) {
+                    flex-basis: #{scaleValue(180)};
+                }
+
+                &:nth-child(5) {
+                    flex-basis: #{scaleValue(70)};
+                }
+            }
+
+            &--amount {
+                display: flex;
+                align-items: center;
+            }
+
+            &--total {
+
+                &.transfer {
+                    color: rgba(#138D75, .9)
+                }
+
+                &.deposit {
+                    color: rgba(#474DFF, .9)
+                }
+
+                &.withdrawal {
+                    color: rgba(#C0392B, .9)
+                }
+            }
+
+            &--label {
+                border-radius: 100%;
+                height: #{scaleValue(24)};
+                width: #{scaleValue(24)};
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: red;
+                margin-right: #{scaleValue(10)};
+                font-size: #{scaleValue(10)};
+                color: #fff;
+
+                &.transfer {
+                    background: rgba(#138D75, .9)
+                }
+
+                &.deposit {
+                    background: rgba(#474DFF, .9)
+                }
+
+                &.withdrawal {
+                    background: rgba(#C0392B, .9)
+                }
+            }
+        }
 
         &__header {
             padding: #{scaleValue(20)} #{scaleValue(90)};

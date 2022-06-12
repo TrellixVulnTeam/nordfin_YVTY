@@ -74,7 +74,7 @@
                     this.setUser(user, token)
                 })
                 .then(() => {
-                    this.$router.push('/overview');
+                    this.$router.push('/wallet');
                 })
                 .catch(err => console.log(err));
             },              

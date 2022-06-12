@@ -35,6 +35,14 @@
                             </span>
                         </span>
                     </div>
+                     <div class="signup__containerformarea">
+                        <span>
+                            <input type="text" placeholder=" " v-model="iban"/>
+                            <span>
+                                <p>Iban</p>
+                            </span>
+                        </span>
+                    </div>
                     <div class="signup__containerformarea">
                         <span>
                             <input type="phonenumber" placeholder=" " v-model="phonenumber"/>
@@ -87,6 +95,7 @@
                 firstname: '',
                 lastname: '',
                 email: '',
+                iban: '',
                 phonenumber: '',
                 password: '',
                 confirmpassword: '',
@@ -117,7 +126,7 @@
                     this.setUser(user, token);
                 })
                 .then(() => {
-                    this.$router.push('/overview');
+                    this.$router.push('/wallet');
                 })
                 .catch(err => console.log(err));
             },            
@@ -129,6 +138,7 @@
                     firstname, 
                     lastname, 
                     email, 
+                    iban,
                     phonenumber,
                     password,
                     confirmpassword,
@@ -138,6 +148,7 @@
                     firstname,
                     lastname,
                     email,
+                    iban,
                     phonenumber,
                     password,
                     confirmpassword,

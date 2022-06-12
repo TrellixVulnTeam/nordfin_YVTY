@@ -1,7 +1,9 @@
 export default {
     computed: {
         baseUrl() {
-            return `http://5b87-37-9-60-74.ngrok.io`;
+            return `http://138.201.184.155:8001`; //http://138.201.184.155:8001
         },
     }
 }
+
+//development http://localhost:8080

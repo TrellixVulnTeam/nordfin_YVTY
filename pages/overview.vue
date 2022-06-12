@@ -1,119 +1,5 @@
 <template>
   <div>
-    <div class="dashboard__slide" v-if="slide === 'cards'" @click.stop="closeslide">
-       <div></div>
-       <div class="dashboard__slide--body" @click.stop="openslide('cards')">
-            <h2 class="dashboard__slide--h2">Your Cards</h2>
-            <div>You don't have any cards currently</div>
-            <div>
-                <button>Apply for a card</button>
-            </div>
-       </div>
-    </div>
-    <div class="dashboard__slide" v-if="slide === 'transactions'" @click.stop="closeslide">
-        <div></div>
-       <div class="dashboard__slide--body dashboard__slide--transaction" @click.stop="openslide('transactions')">
-            <h2 class="dashboard__slide--h2">Your Transactions</h2>
-            <div class="dashboard__right">
-                <div class="dashboard__middle">
-    <div class="dashboard__middletop">
-        <div class="dashboard__middletop--left">
-        <div class="dashboard__middletop--item" :class="{
-            current: transPage === 'all'
-        }" @click="toggleTransPage('all')">
-            <p>All transactions</p>
-        </div>
-        <div class="dashboard__middletop--item" :class="{
-            current: transPage === 'deposit'
-        }" @click="toggleTransPage('deposit')">
-            <p>Deposits</p>
-        </div>
-        <div class="dashboard__middletop--item" :class="{
-            current: transPage === 'withdrawal'
-        }" @click="toggleTransPage('withdrawal')">
-            <p>Withdrawals</p>
-        </div>
-        <div class="dashboard__middletop--item" :class="{
-            current: transPage === 'transfer'
-        }" @click="toggleTransPage('transfer')">
-            <p>Transfers</p>
-        </div>
-        </div>
-
-        <div class="dashboard__middletop--right">
-            <button class="dashboard__middletop--btn"></button>
-        </div>
-    </div>
-
-    <div class="dashboard__middlecontent" v-if="user">
-        <div v-if="!user.transactions.length" class="dashboard__middlecontent--notransactions">
-            <p>Currently you have made no transactions</p>
-        </div>
-        <div class="dashboard__middleconitem" v-for="transaction in user.transactions" :class="{
-            visible: transPage === transaction.transactionType || transPage === 'all'
-        }">
-            <div class="dashboard__middleconitem--amount dashboard__middleconitem--area" v-if="transaction.transactionType === 'deposit'">
-                <span class="dashboard__middleconitem--label deposit">
-                   <p>D</p>
-                </span>
-                <span class="dashboard__middleconitem--total deposit">
-                    <p>+$ {{truncate(parseFloat(transaction.amount).toLocaleString('en-US'))}}</p>
-                </span>
-            </div>
-            <div class="dashboard__middleconitem--amount dashboard__middleconitem--area" v-if="transaction.transactionType === 'withdrawal'">
-                <span class="dashboard__middleconitem--label withdrawal">
-                   <p>W</p>
-                </span>
-                <span class="dashboard__middleconitem--total withdrawal">
-                    <p>-$ {{truncate(parseFloat(transaction.amount).toLocaleString('en-US'))}}</p>
-                </span>
-            </div>
-            <div class="dashboard__middleconitem--amount dashboard__middleconitem--area" v-if="transaction.transactionType === 'transfer'">
-                <span class="dashboard__middleconitem--label transfer">
-                   <p>T</p>
-                </span>
-                <span class="dashboard__middleconitem--total transfer">
-                    <p>-$ {{truncate(parseFloat(transaction.amount).toLocaleString('en-US'))}}</p>
-                </span>
-            </div>
-            <div class="dashboard__middleconitem--area capitalize">
-                <p>{{transaction.dateTime}}</p>
-            </div>
-            <div class="dashboard__middleconitem--area capitalize">
-                <p>{{transaction.transactionType}}</p>
-            </div>
-            <div class="dashboard__middleconitem--area">
-                Trans ID: {{transaction.transactionId}}
-            </div>
-            <div class="dashboard__middleconitem--area fee">
-                <p>${{truncate(parseFloat(transaction.fee).toLocaleString('en-US'))}}</p>
-            </div>
-        </div>
-    </div>
-    </div>
-            </div>
-       </div>
-    </div>
-    <div class="dashboard__slide" v-if="slide === 'notifications'" @click.stop="closeslide">
-        <div></div>
-       <div class="dashboard__slide--body" @click.stop="openslide('notifications')">
-            <h2 class="dashboard__slide--h2">Your Notifications</h2>
-            <div class="dashboard__notifications">
-                <div class="dashboard__notification">
-                    <p>You just deposited $25000 in your wallet</p>
-                    <p>July 23rd 2022</p>
-                </div>
-                <div class="dashboard__notification">
-                    <p>Your cards have been created</p>
-                    <p>July 23rd 2022</p>
-                </div>
-                <div class="dashboard__notification">
-                    <p>Your withdrawal request has been reviewed</p>
-                    <p>July 23rd 2022</p>
-                </div>
-            </div>
-       </div>
-    </div>
     <Dashboard :title="user ? `${user.firstname} ${user.lastname}` : ''" :openslide="openslide">
         <template v-slot:base>
             <div class="dashboard">
@@ -136,7 +22,7 @@
                                 <p>Total Balance</p>
                                 </div>
                                 <div class="dashboard__cardmid">
-                                    <p>${{user ? truncate(`${user.balance.toLocaleString('en-US')}`) : ''}}</p>
+                                    <p>${{user ? truncate(`${user.balance ? user.balance.toLocaleString('en-US') : 0}`) : ''}}</p>
                                     <p></p>
                                 </div>
                             </div>
@@ -245,12 +131,10 @@ import { isBrowser } from "browser-or-node";
 export default {
     data() {
         return {
-            transPage: 'all',
             transactionForm: 'Withdraw',
             bank: null,
             amount: null,
             recepient: null,
-            slide: null,
             series: [{
             data: [{
                 x: new Date(1538778600000),
@@ -512,9 +396,6 @@ export default {
             }
     },
     methods: {
-        toggleTransPage(page) {
-            this.transPage = page;
-        },
         withdraw () {
             const { bank, amount, recepient } = this;
 
@@ -536,12 +417,6 @@ export default {
             }
             return input;
         },
-        closeslide() {
-            this.slide = null
-        },
-        openslide(val) {
-            this.slide = val
-        }
     },
     mixins: [userMixin],
     computed: {
@@ -576,38 +451,6 @@ export default {
         width: #{scaleValue(5000)};
         height: #{scaleValue(800)};
 
-        &__slide {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: rgba(0, 0, 0, .2);
-            height: 100vh;
-            width: 100vw;
-            z-index: 16;
-            box-shadow: -11px 3px 85px 13px rgba(0,0,0,0.62);
-            -webkit-box-shadow: -11px 3px 85px 13px rgba(0,0,0,0.62);
-            -moz-box-shadow: -11px 3px 85px 13px rgba(0,0,0,0.62);
-            color: #000000;
-            display: flex;
-            justify-content: space-between;
-
-            &--h2 {
-                font-weight: 500;
-                font-size: #{scaleValue(20)};
-                padding: #{scaleValue(24)};
-            }
-
-            &--body {
-                background: #fff;
-                height: 100%;
-                width: #{scaleValue(400)};
-            }
-
-            &--transaction {
-                width: #{scaleValue(850)};
-            }
-        }
-
         &__top {
             display: flex;
             flex-direction: column;
@@ -628,185 +471,6 @@ export default {
             margin-left: #{scaleValue(40)}
         }
 
-        &__middle {
-            position: relative;
-            background: #fff;
-            webkit-box-shadow: 0px 0px 27px 0px rgba(#474DFF, .3);
-            -moz-box-shadow:    0px 0px 27px 0px rgba(#474DFF, .3);
-            box-shadow:         0px 0px 27px 0px rgba(#474DFF, .3);
-            flex-basis: #{scaleValue(800)};
-            padding: #{scaleValue(25)} #{scaleValue(30)};
-            border-radius: .9rem;
-            color: #000000;
-            
-            transition: all .3s ease-in;
-        }
-
-        &__middletop {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: .4px solid rgba(0, 0, 0, .4);
-            
-            &--left {
-                display: flex;
-            }
-
-            &--right {
-                display: flex;
-                align-items: center;
-            }
-
-            &--btn {
-                outline: none;
-                background: none;
-                color: rgba(#474DFF, .9);
-                cursor: pointer;
-                border: none;
-                font-weight: 500;
-                font-size: #{scaleValue(13)};
-            }
-
-            &--item {
-                margin-right: #{scaleValue(25)};
-                font-size: #{scaleValue(15)};
-                padding: #{scaleValue(12)} 0;
-                cursor: pointer;
-                color: rgba(0, 0, 0, .4);
-                position: relative;
-                transition: all .1s ease-in;
-
-                & p {
-                    font-weight: 500;
-                }
-
-                &:before {
-                    content: '';
-                    position: absolute;
-                    bottom: #{scaleValue(15)};
-                    left: 0;
-                    background: rgba(0, 0, 0, 0);
-                    height: 2px;
-                    width: 100%;
-                    border-radius: 3rem;
-                    transition: all .1s ease-in;
-                }
-
-                &.current {
-                    color: rgba(0, 0, 0, 1);
-
-                    &:before {
-                        background: rgba(0, 0, 0, 1);
-                        bottom: 0;
-                    }
-                }
-            }
-        }
-
-        &__middlecontent {
-
-            &--notransactions {
-                font-size: #{scaleValue(20)};
-                text-align: center;
-                padding: #{scaleValue(30)};
-                font-weight: 500;
-            }
-        }
-
-        &__middleconitem {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: #{scaleValue(20)} 0;
-            font-size: #{scaleValue(14)};
-            color: rgba(0, 0, 0, .6);
-            border-bottom: .4px solid rgba(0, 0, 0, .4);
-            display: none;
-
-            &.visible {
-                display: flex;
-            }
-
-            &:last-child {
-                border: none;
-            }
-
-            &--area {
-                text-align: left;
-                flex-shrink: 0;
-
-                &.capitalize {
-                
-                    & p {
-                        text-transform: capitalize;
-                    }
-                }
-
-                &:nth-child(1) {
-                    flex-basis: #{scaleValue(150)};
-                }
-
-                &:nth-child(2) {
-                    flex-basis: #{scaleValue(150)};
-                }
-
-                &:nth-child(3) {
-                    flex-basis: #{scaleValue(80)};
-                }
-
-                &:nth-child(4) {
-                    flex-basis: #{scaleValue(180)};
-                }
-
-                &:nth-child(5) {
-                    flex-basis: #{scaleValue(70)};
-                }
-            }
-
-            &--amount {
-                display: flex;
-                align-items: center;
-            }
-
-            &--total {
-
-                &.transfer {
-                    color: rgba(#138D75, .9)
-                }
-
-                &.deposit {
-                    color: rgba(#474DFF, .9)
-                }
-
-                &.withdrawal {
-                    color: rgba(#C0392B, .9)
-                }
-            }
-
-            &--label {
-                border-radius: 100%;
-                height: #{scaleValue(24)};
-                width: #{scaleValue(24)};
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: red;
-                margin-right: #{scaleValue(10)};
-                font-size: #{scaleValue(10)};
-                color: #fff;
-
-                &.transfer {
-                    background: rgba(#138D75, .9)
-                }
-
-                &.deposit {
-                    background: rgba(#474DFF, .9)
-                }
-
-                &.withdrawal {
-                    background: rgba(#C0392B, .9)
-                }
-            }
-        }
 
         &__card {
             position: relative;
