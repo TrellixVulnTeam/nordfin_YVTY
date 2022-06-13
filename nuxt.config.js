@@ -54,9 +54,8 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
   },
-  buildDir: 'dist',
-  target: 'static',
-  generate: {
-    fallback: true,
+  server: {
+    host: process.env.NUXT_HOST,
+    port: process.env.NUXT_PORT,
   }
 }
